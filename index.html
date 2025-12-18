@@ -15,6 +15,7 @@
 
     <!-- Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
@@ -47,7 +48,6 @@
         header { text-align: center; margin-bottom: 20px; position: relative; }
         h1 { font-weight: 600; font-size: 1.8rem; margin-bottom: 5px; }
 
-        /* Refresh Button */
         .top-actions { position: absolute; right: 0; top: 0; }
         .btn-refresh-data {
             background: transparent; border: 1px solid #ccc; padding: 5px 10px;
@@ -56,7 +56,7 @@
         }
         .btn-refresh-data:hover { background: #fff; color: #1976D2; border-color: #1976D2; }
 
-        /* --- Filter Section --- */
+        /* --- Filter --- */
         .filter-container {
             background: var(--card-bg);
             padding: 15px 20px;
@@ -67,191 +67,97 @@
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             margin-bottom: 20px;
         }
-
         .filter-label { font-weight: 500; color: var(--text-muted); margin-right: 5px; }
-
         select {
-            padding: 8px 15px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-family: 'Kanit', sans-serif;
-            color: #555;
-            background: #FAFAFA;
-            min-width: 150px;
-            outline: none;
+            padding: 8px 15px; border: 1px solid #ddd; border-radius: 4px;
+            font-family: 'Kanit', sans-serif; color: #555; background: #FAFAFA;
+            min-width: 150px; outline: none;
         }
-
         .btn-reset {
-            background: #fff;
-            border: 1px solid #ddd;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: 'Kanit', sans-serif;
-            color: #555;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            transition: all 0.2s;
+            background: #fff; border: 1px solid #ddd; padding: 8px 15px;
+            border-radius: 4px; cursor: pointer; font-family: 'Kanit', sans-serif;
+            color: #555; display: flex; align-items: center; gap: 5px; transition: all 0.2s;
         }
         .btn-reset:hover { background: #f0f0f0; }
 
-        /* --- KPI Cards --- */
+        /* --- KPI --- */
         .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 20px;
-            margin-bottom: 20px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px; margin-bottom: 20px;
         }
-
         .kpi-card {
-            border-radius: 8px;
-            padding: 20px;
-            color: white;
-            position: relative;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            min-height: 100px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
+            border-radius: 8px; padding: 20px; color: white; position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1); min-height: 100px;
+            display: flex; flex-direction: column; justify-content: space-between;
         }
-
         .card-blue { background: linear-gradient(135deg, #42A5F5, #1976D2); }
         .card-green { background: linear-gradient(135deg, #4DB6AC, #009688); }
         .card-orange { background: linear-gradient(135deg, #FFB74D, #F57C00); }
         .card-purple { background: linear-gradient(135deg, #AB47BC, #7B1FA2); }
-
         .kpi-title { font-size: 0.85rem; opacity: 0.9; margin-bottom: 5px; }
         .kpi-value { font-size: 1.6rem; font-weight: 600; }
-        
         .kpi-icon {
-            position: absolute;
-            top: 50%;
-            right: 20px;
-            transform: translateY(-50%);
-            font-size: 2.5rem;
-            opacity: 0.2;
+            position: absolute; top: 50%; right: 20px; transform: translateY(-50%);
+            font-size: 2.5rem; opacity: 0.2;
         }
 
         /* --- Charts --- */
         .charts-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 20px;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;
         }
-
         .chart-card {
-            background: var(--card-bg);
-            border-radius: 8px;
-            padding: 20px;
+            background: var(--card-bg); border-radius: 8px; padding: 20px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
-
         .chart-title { font-size: 1rem; font-weight: 600; margin-bottom: 15px; }
         .chart-wrapper { position: relative; height: 300px; width: 100%; }
         .pie-wrapper { display: flex; justify-content: center; height: 300px; }
 
-        /* --- Table Section --- */
+        /* --- Table --- */
         .table-section {
-            background: var(--card-bg);
-            border-radius: 8px;
+            background: var(--card-bg); border-radius: 8px; padding: 20px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            padding: 20px;
         }
-
         .table-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;
         }
-
         .table-title { font-size: 1.1rem; font-weight: 600; }
-
         .table-actions { display: flex; gap: 10px; }
-        
         .btn-action {
-            background: #fff;
-            border: 1px solid #ddd;
-            padding: 6px 15px;
-            border-radius: 4px;
-            font-size: 0.85rem;
-            cursor: pointer;
-            color: #555;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            font-family: 'Kanit', sans-serif;
+            background: #fff; border: 1px solid #ddd; padding: 6px 15px;
+            border-radius: 4px; font-size: 0.85rem; cursor: pointer; color: #555;
+            display: flex; align-items: center; gap: 6px; font-family: 'Kanit', sans-serif;
         }
         .btn-action:hover { border-color: #bbb; color: #333; }
-
-        /* Table Styling */
         .table-responsive { overflow-x: auto; }
-        
         table { width: 100%; border-collapse: collapse; font-size: 0.85rem; color: #444; }
-        
         thead th {
-            text-align: right;
-            padding: 12px 10px;
-            font-weight: 500;
-            color: #888;
-            border-bottom: 1px solid #eee;
-            white-space: nowrap;
-            cursor: pointer;
-            user-select: none;
+            text-align: right; padding: 12px 10px; font-weight: 500; color: #888;
+            border-bottom: 1px solid #eee; white-space: nowrap; cursor: pointer; user-select: none;
         }
         thead th:hover { color: #333; background-color: #fafafa; }
         thead th:first-child { text-align: left; }
-        
         tbody td {
-            padding: 15px 10px;
-            border-bottom: 1px solid #f5f5f5;
-            text-align: right;
+            padding: 15px 10px; border-bottom: 1px solid #f5f5f5; text-align: right;
         }
         tbody td:first-child { text-align: left; font-weight: 500; color: #333; }
-        
-        /* Row Styles */
         tr:hover { background-color: #fafafa; }
-        
-        /* Today Row */
         .row-today { background-color: #f0f7ff; color: var(--blue-card); font-weight: 500; }
-        
-        /* Footer Row */
         .row-footer { background-color: #eeeeee; font-weight: 600; color: #333; border-top: 2px solid #ddd; }
-        
-        /* Expanded Child Row */
         .row-child { background-color: #fcfcfc; color: #666; font-size: 0.8rem; }
         .row-child td { border-bottom: 1px solid #eee; padding: 10px 10px; }
         .row-child td:first-child { padding-left: 40px; color: #777; font-weight: 400; }
-
-        /* Icons */
         .arrow-icon { 
-            font-size: 0.7rem; 
-            color: #ccc; 
-            margin-right: 8px; 
-            cursor: pointer; 
-            transition: transform 0.2s;
-            display: inline-block;
-            width: 15px;
-            text-align: center;
+            font-size: 0.7rem; color: #ccc; margin-right: 8px; cursor: pointer; 
+            transition: transform 0.2s; display: inline-block; width: 15px; text-align: center;
         }
         .arrow-icon:hover { color: #1976D2; }
         .arrow-icon.expanded { transform: rotate(90deg); color: #1976D2; }
-
         .sort-icon { margin-left: 5px; font-size: 0.7rem; opacity: 0.5; }
         .sort-active { opacity: 1; color: #1976D2; }
 
-        /* --- Footer --- */
-        .page-footer {
-            margin-top: 20px;
-            text-align: right;
-            font-size: 0.75rem;
-            color: #999;
-            line-height: 1.5;
-        }
+        .page-footer { margin-top: 20px; text-align: right; font-size: 0.75rem; color: #999; line-height: 1.5; }
         
-        /* Loader */
         .loading-overlay {
             position: fixed; top:0; left:0; width:100%; height:100%;
             background: rgba(255,255,255,0.8);
@@ -260,7 +166,6 @@
             flex-direction: column; gap: 10px;
         }
 
-        /* Responsive */
         @media (max-width: 900px) {
             .charts-section { grid-template-columns: 1fr; }
             .kpi-grid { grid-template-columns: 1fr 1fr; }
@@ -281,7 +186,6 @@
 </div>
 
 <div class="container" id="capture-area">
-    <!-- Header -->
     <header>
         <h1>สรุปยอดการชำระเงิน Mycensor</h1>
         <div class="top-actions">
@@ -291,7 +195,6 @@
         </div>
     </header>
 
-    <!-- Filter Bar -->
     <div class="filter-container" data-html2canvas-ignore="true">
         <span class="filter-label">ตัวกรอง:</span>
         <select id="year-filter"></select>
@@ -379,14 +282,11 @@
                         </th>
                     </tr>
                 </thead>
-                <tbody id="table-body">
-                    <!-- Data Rows -->
-                </tbody>
+                <tbody id="table-body"></tbody>
             </table>
         </div>
     </div>
 
-    <!-- Footer -->
     <div class="page-footer">
         <div id="footer-date">ข้อมูล ณ วันที่...</div>
         <div>*ยอดใช้งาน Credit Terms รวม vat แต่ยังไม่ได้หัก ภาษี ณ ที่จ่าย</div>
@@ -394,7 +294,9 @@
 </div>
 
 <script>
-// --- Utils ---
+// Register DataLabels plugin globally
+Chart.register(ChartDataLabels);
+
 const safeParseFloat = (val) => {
     if (val === null || val === undefined) return 0;
     const str = String(val).trim().replace(/,/g, '');
@@ -414,15 +316,11 @@ const thaiMonthsShort = [
 const formatCurrency = (val) => new Intl.NumberFormat('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(val);
 const formatInt = (val) => new Intl.NumberFormat('en-US').format(val);
 
-// --- App ---
 const app = {
-    // NEW URL PROVIDED BY USER
     url: 'https://script.google.com/macros/s/AKfycbyH9NXVatrbgGQfcRAHafvgkWOz1-WDQ2A0r1ooKtzDmvENyR9NfVo4h3T8NYXi5us/exec',
     data: [],
     filtered: [],
     charts: { bar: null, pie: null },
-    
-    // State
     expandedRows: new Set(),
     sortState: { key: 'date', dir: 'desc' }, 
 
@@ -438,9 +336,7 @@ const app = {
 
     fetchData: async function() {
         try {
-            // CACHE BUSTING: Add timestamp to force real-time data
             const freshUrl = this.url + '?t=' + new Date().getTime();
-            
             const res = await fetch(freshUrl);
             const json = await res.json();
             const raw = Array.isArray(json) ? json : (json.data || []);
@@ -475,10 +371,10 @@ const app = {
 
             if(!dateObj) return acc;
 
-            // FUTURE DATE FILTER REMOVED TO ENSURE REAL-TIME DATA IS SEEN
-            // (Previously filtered if > today, but sometimes timezones or data entry causes issues)
-            
-            // Deduplicate (Remove Monthly Summary row - typically the 2nd occurrence of 1st of month)
+            const rowDate = new Date(dateObj);
+            rowDate.setHours(0,0,0,0);
+            if (rowDate.getTime() > today.getTime()) return acc;
+
             const key = `${dateObj.getFullYear()}-${dateObj.getMonth()}-${dateObj.getDate()}`;
             if(seenDates.has(key)) return acc;
             seenDates.add(key);
@@ -489,7 +385,6 @@ const app = {
                 year: dateObj.getFullYear(),
                 monthIdx: dateObj.getMonth(),
                 day: dateObj.getDate(),
-                
                 pre: safeParseFloat(row.pre),
                 post: safeParseFloat(row.post),
                 cutdown: safeParseFloat(row.cutdown),
@@ -509,7 +404,6 @@ const app = {
     populateFilters: function() {
         const ySel = document.getElementById('year-filter');
         const mSel = document.getElementById('month-filter');
-        
         ySel.innerHTML = '';
         mSel.innerHTML = '<option value="all">ทุกเดือน</option>';
 
@@ -520,11 +414,8 @@ const app = {
         });
         thaiMonthsFull.forEach((m, i) => mSel.add(new Option(m, i)));
 
-        ySel.removeEventListener('change', () => this.updateView());
-        mSel.removeEventListener('change', () => this.updateView());
-        
-        ySel.addEventListener('change', () => this.updateView());
-        mSel.addEventListener('change', () => this.updateView());
+        ySel.onchange = () => this.updateView();
+        mSel.onchange = () => this.updateView();
     },
 
     updateView: function() {
@@ -586,6 +477,7 @@ const app = {
             pieSums.pre += d.pre; pieSums.post += d.post; pieSums.cut += d.cutdown; pieSums.rep += d.reply;
         });
 
+        // 1. BAR CHART
         const ctxBar = document.getElementById('barChart').getContext('2d');
         if(this.charts.bar) this.charts.bar.destroy();
         this.charts.bar = new Chart(ctxBar, {
@@ -604,12 +496,17 @@ const app = {
                     x: { grid: { display: false } },
                     y: { beginAtZero: true, grid: { borderDash: [2, 4] } }
                 },
-                plugins: { legend: { position: 'bottom' } }
+                plugins: { 
+                    legend: { position: 'bottom' },
+                    datalabels: { display: false } 
+                }
             }
         });
 
+        // 2. DOUGHNUT CHART (Labels Outside, Legend Padded)
         const ctxPie = document.getElementById('pieChart').getContext('2d');
         if(this.charts.pie) this.charts.pie.destroy();
+        
         this.charts.pie = new Chart(ctxPie, {
             type: 'doughnut',
             data: {
@@ -621,10 +518,39 @@ const app = {
                 }]
             },
             options: {
+                layout: {
+                    padding: 30 
+                },
                 responsive: true,
                 maintainAspectRatio: false,
-                cutout: '60%',
-                plugins: { legend: { position: 'bottom', labels: { usePointStyle: true } } }
+                cutout: '50%',
+                plugins: { 
+                    legend: { 
+                        position: 'bottom', 
+                        labels: { 
+                            usePointStyle: true, 
+                            padding: 50 // Increased Padding to push legend down approx 2 lines
+                        } 
+                    },
+                    datalabels: {
+                        color: '#333', 
+                        anchor: 'end',
+                        align: 'end',
+                        offset: 10,
+                        font: { weight: 'bold', size: 11 },
+                        textAlign: 'center',
+                        formatter: (value, ctx) => {
+                            if(value === 0) return null;
+                            let sum = 0;
+                            let dataArr = ctx.chart.data.datasets[0].data;
+                            dataArr.map(data => { sum += data; });
+                            let percentage = (value * 100 / sum).toFixed(1) + "%";
+                            let label = ctx.chart.data.labels[ctx.dataIndex];
+                            let valStr = new Intl.NumberFormat('en-US').format(value);
+                            return `${label}\n${valStr}\n${percentage}`;
+                        }
+                    }
+                }
             }
         });
     },
@@ -645,7 +571,6 @@ const app = {
     updateSortIcons: function() {
         document.getElementById('sort-icon-date').className = 'fas fa-sort sort-icon';
         document.getElementById('sort-icon-grand').className = 'fas fa-sort sort-icon';
-        
         const iconId = `sort-icon-${this.sortState.key}`;
         const iconClass = this.sortState.dir === 'asc' ? 'fas fa-sort-up sort-icon sort-active' : 'fas fa-sort-down sort-icon sort-active';
         const el = document.getElementById(iconId);
@@ -684,9 +609,7 @@ const app = {
                     pre:0, post:0, cut:0, rep:0, qr:0, cc:0, total_qc:0, terms:0, grand:0,
                     children: [] 
                 };
-                
                 agg[k].children.push(d);
-
                 ['pre','post','cutdown','reply','qr_code','credit_card','total_qr_credit','credit_terms','grand_total'].forEach(field => {
                     const val = (field === 'cutdown') ? d.cutdown : d[field];
                     agg[k][field === 'cutdown' ? 'cut' : (field === 'qr_code' ? 'qr' : (field === 'credit_card' ? 'cc' : (field === 'total_qr_credit' ? 'total_qc' : (field === 'credit_terms' ? 'terms' : (field === 'grand_total' ? 'grand' : field)))))] += val;
@@ -731,13 +654,11 @@ const app = {
 
         displayRows.forEach(r => {
             const tr = document.createElement('tr');
-            
             const isExpanded = isMonthlyView && this.expandedRows.has(r.key);
             const arrowClass = isExpanded ? 'arrow-icon expanded' : 'arrow-icon';
             const arrowHtml = (isMonthlyView && r.children && r.children.length > 0) 
                 ? `<i class="fas fa-chevron-right ${arrowClass}" onclick="app.toggleExpand('${r.key}')"></i>` 
                 : '';
-
             const nameCell = `${arrowHtml} ${r.label}`;
 
             tr.innerHTML = `
@@ -781,7 +702,6 @@ const app = {
              const day = todayData.dateObj.getDate();
              const monthShort = thaiMonthsShort[todayData.dateObj.getMonth()];
              const yearThai = todayData.dateObj.getFullYear() + 543;
-             
              tr.innerHTML = `
                 <td style="text-align:left;">ข้อมูลวันนี้ ${day} ${monthShort} ${yearThai}</td>
                 ${createCell(formatInt(todayData.pre))}
@@ -854,7 +774,6 @@ const app = {
         const originalPadding = element.style.padding;
         element.style.padding = "30px";
         element.style.background = "#fff";
-
         html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
             element.style.padding = originalPadding;
             element.style.background = "";
