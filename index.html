@@ -278,7 +278,7 @@
                         <th>ยอด QR/Credit</th>
                         <th>Credit Terms</th>
                         <th onclick="app.handleSort('grand')">
-                            ยอดรวม <i id="sort-icon-grand" class="fas fa-sort sort-icon"></i>
+                            ยอดรวม (บาท) <i id="sort-icon-grand" class="fas fa-sort sort-icon"></i>
                         </th>
                     </tr>
                 </thead>
@@ -503,7 +503,7 @@ const app = {
             }
         });
 
-        // 2. DOUGHNUT CHART (Labels Outside, Legend Padded)
+        // 2. DOUGHNUT CHART
         const ctxPie = document.getElementById('pieChart').getContext('2d');
         if(this.charts.pie) this.charts.pie.destroy();
         
@@ -519,7 +519,7 @@ const app = {
             },
             options: {
                 layout: {
-                    padding: 30 
+                    padding: { top: 50, bottom: 30, left: 30, right: 30 } 
                 },
                 responsive: true,
                 maintainAspectRatio: false,
@@ -529,7 +529,7 @@ const app = {
                         position: 'bottom', 
                         labels: { 
                             usePointStyle: true, 
-                            padding: 50 // Increased Padding to push legend down approx 2 lines
+                            padding: 50 
                         } 
                     },
                     datalabels: {
@@ -547,7 +547,7 @@ const app = {
                             let percentage = (value * 100 / sum).toFixed(1) + "%";
                             let label = ctx.chart.data.labels[ctx.dataIndex];
                             let valStr = new Intl.NumberFormat('en-US').format(value);
-                            return `${label}\n${valStr}\n${percentage}`;
+                            return `${label} : ${valStr}\n${percentage}`;
                         }
                     }
                 }
@@ -598,6 +598,13 @@ const app = {
 
         let displayRows = [];
 
+        // Mapping for clean aggregation
+        const fieldMap = {
+            'pre': 'pre', 'post': 'post', 'cutdown': 'cut', 'reply': 'rep',
+            'qr_code': 'qr', 'credit_card': 'cc', 'total_qr_credit': 'total_qc',
+            'credit_terms': 'terms', 'grand_total': 'grand'
+        };
+
         if (isMonthlyView) {
             const agg = {};
             this.filtered.forEach(d => {
@@ -610,9 +617,10 @@ const app = {
                     children: [] 
                 };
                 agg[k].children.push(d);
-                ['pre','post','cutdown','reply','qr_code','credit_card','total_qr_credit','credit_terms','grand_total'].forEach(field => {
-                    const val = (field === 'cutdown') ? d.cutdown : d[field];
-                    agg[k][field === 'cutdown' ? 'cut' : (field === 'qr_code' ? 'qr' : (field === 'credit_card' ? 'cc' : (field === 'total_qr_credit' ? 'total_qc' : (field === 'credit_terms' ? 'terms' : (field === 'grand_total' ? 'grand' : field)))))] += val;
+                
+                Object.keys(fieldMap).forEach(field => {
+                    const targetKey = fieldMap[field];
+                    agg[k][targetKey] += d[field];
                 });
             });
             displayRows = Object.values(agg);
@@ -667,8 +675,8 @@ const app = {
                 ${createCell(formatInt(r.post))}
                 ${createCell(formatInt(r.cut))}
                 ${createCell(formatInt(r.rep))}
-                ${createCell(formatCurrency(r.qr))}
-                ${createCell(formatCurrency(r.cc))}
+                ${createCell(formatInt(r.qr))}
+                ${createCell(formatInt(r.cc))}
                 ${createCell(formatCurrency(r.total_qc))}
                 ${createCell(formatCurrency(r.terms))}
                 ${createCell(formatCurrency(r.grand))}
@@ -685,8 +693,8 @@ const app = {
                         ${createCell(formatInt(c.post))}
                         ${createCell(formatInt(c.cutdown))}
                         ${createCell(formatInt(c.reply))}
-                        ${createCell(formatCurrency(c.qr_code))}
-                        ${createCell(formatCurrency(c.credit_card))}
+                        ${createCell(formatInt(c.qr_code))}
+                        ${createCell(formatInt(c.credit_card))}
                         ${createCell(formatCurrency(c.total_qr_credit))}
                         ${createCell(formatCurrency(c.credit_terms))}
                         ${createCell(formatCurrency(c.grand_total))}
@@ -708,8 +716,8 @@ const app = {
                 ${createCell(formatInt(todayData.post))}
                 ${createCell(formatInt(todayData.cutdown))}
                 ${createCell(formatInt(todayData.reply))}
-                ${createCell(formatCurrency(todayData.qr_code))}
-                ${createCell(formatCurrency(todayData.credit_card))}
+                ${createCell(formatInt(todayData.qr_code))}
+                ${createCell(formatInt(todayData.credit_card))}
                 ${createCell(formatCurrency(todayData.total_qr_credit))}
                 ${createCell(formatCurrency(todayData.credit_terms))}
                 ${createCell(formatCurrency(todayData.grand_total))}
@@ -720,7 +728,7 @@ const app = {
              const str = `ข้อมูลวันนี้ ${d.getDate()} ${thaiMonthsShort[d.getMonth()]} ${d.getFullYear()+543}`;
              const tr = document.createElement('tr');
              tr.className = 'row-today';
-             tr.innerHTML = `<td style="text-align:left;">${str}</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.00</td><td>0.00</td><td>0.00</td><td>0.00</td><td>0.00</td>`;
+             tr.innerHTML = `<td style="text-align:left;">${str}</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0.00</td><td>0.00</td><td>0.00</td>`;
              tbody.appendChild(tr);
         }
 
@@ -732,8 +740,8 @@ const app = {
             ${createCell(formatInt(grandTotal.post))}
             ${createCell(formatInt(grandTotal.cut))}
             ${createCell(formatInt(grandTotal.rep))}
-            ${createCell(formatCurrency(grandTotal.qr))}
-            ${createCell(formatCurrency(grandTotal.cc))}
+            ${createCell(formatInt(grandTotal.qr))}
+            ${createCell(formatInt(grandTotal.cc))}
             ${createCell(formatCurrency(grandTotal.total_qc))}
             ${createCell(formatCurrency(grandTotal.terms))}
             ${createCell(formatCurrency(grandTotal.grand))}
